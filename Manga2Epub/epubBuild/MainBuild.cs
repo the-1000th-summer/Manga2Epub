@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
 using System.Windows;
 using Ionic.Zip;
@@ -24,12 +25,16 @@ namespace Manga2Epub.epubBuild {
             //MessageBox.Show(Path.GetFullPath(Path.Combine("E:\\ACG\\folder\\aa (output)", "..", "haha.epub")));
 
 
-            //utils.mkfile(@"E:\ACG\container.xml",FileTemplates.containerXml);
+            //utils.mkfile(@"E:\ACG\container.xml", FileTemplates.containerXml);
+
+
             var b = new EpubBuilder(absDirPath, parentDirPath);
             b.build();
 
         }
 
-       
+        
+
+
     }
 }

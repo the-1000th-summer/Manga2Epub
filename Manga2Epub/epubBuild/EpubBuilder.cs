@@ -119,7 +119,7 @@ namespace Manga2Epub.epubBuild {
             var zipFileName =
                 Path.GetFullPath(Path.Combine(this.outputRoot, "..", $"{this.bookName}.epub")); // zip压缩包文件完整路径
 
-            // 创建zip文件（扩展名为epub）
+            // 创建zip文件（扩展名为.epub）
             using (var zip = new ZipFile(Encoding.UTF8)) {
 
                 zip.CompressionLevel = CompressionLevel.None;
@@ -129,14 +129,47 @@ namespace Manga2Epub.epubBuild {
                 zip.AddDirectory(Path.Combine(this.outputRoot, "OEBPS"), "OEBPS");
                 // 可能会抛出FileNotFoundException
                 zip.Save(zipFileName);
-
             }
+
+            deleteDir(sourceDir);
         }
 
         public void build() {
             makeMainStructure();
             makeDetails();
             makeEpub();
+        }
+
+        private void deleteDir(string file) {
+            try {
+                //去除文件夹和子文件的只读属性
+                //去除文件夹的只读属性
+                System.IO.DirectoryInfo fileInfo = new DirectoryInfo(file);
+                fileInfo.Attributes = FileAttributes.Normal & FileAttributes.Directory;
+
+                //去除文件的只读属性
+                System.IO.File.SetAttributes(file, System.IO.FileAttributes.Normal);
+
+                //判断文件夹是否还存在
+                if (Directory.Exists(file)) {
+                    foreach (string f in Directory.GetFileSystemEntries(file)) {
+                        if (File.Exists(f)) {
+                            //如果有子文件删除文件
+                            File.Delete(f);
+                            Console.WriteLine(f);
+                        } else {
+                            //循环递归删除子文件夹
+                            deleteDir(f);
+                        }
+                    }
+                    //删除空文件夹
+                    Directory.Delete(file);
+                    Console.WriteLine(file);
+                }
+            } catch (Exception ex) // 异常处理
+            {
+                Console.WriteLine(ex.Message.ToString());// 异常信息
+            }
         }
     }
 }

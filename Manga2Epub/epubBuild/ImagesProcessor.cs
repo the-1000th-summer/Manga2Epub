@@ -40,9 +40,12 @@ namespace Manga2Epub.epubBuild {
             var filesPath = Directory.GetFiles(this.imagesDirPath, "*", SearchOption.TopDirectoryOnly);
             foreach (var filePath in filesPath) {
                 var fileName = Path.GetFileName(filePath);
-                Bitmap im = new Bitmap(filePath);
-                var w = im.Width;
-                var h = im.Height;
+
+                int w, h;
+                using (var im = new Bitmap(filePath)) {
+                    w = im.Height;
+                    h = im.Width;
+                }
 
                 var im_info = new ImageInfo();
                 im_info.fileName = fileName;
