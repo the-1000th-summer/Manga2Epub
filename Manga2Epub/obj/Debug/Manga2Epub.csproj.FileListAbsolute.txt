@@ -17,3 +17,6 @@ E:\CSharpLearn\Manga2Epub\project\Manga2Epub\Manga2Epub\obj\Debug\Manga2Epub.csp
 E:\CSharpLearn\Manga2Epub\project\Manga2Epub\Manga2Epub\obj\Debug\Manga2Epub.exe
 E:\CSharpLearn\Manga2Epub\project\Manga2Epub\Manga2Epub\obj\Debug\Manga2Epub.pdb
 E:\CSharpLearn\Manga2Epub\project\Manga2Epub\Manga2Epub\bin\Debug\Manga2Epub.exe.config
+E:\CSharpLearn\Manga2Epub\project\Manga2Epub\Manga2Epub\bin\Debug\DotNetZip.dll
+E:\CSharpLearn\Manga2Epub\project\Manga2Epub\Manga2Epub\bin\Debug\DotNetZip.pdb
+E:\CSharpLearn\Manga2Epub\project\Manga2Epub\Manga2Epub\bin\Debug\DotNetZip.xml

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
+using Ionic.Zip;
+using Ionic.Zlib;
 
 namespace Manga2Epub.epubBuild {
     class EpubBuilder {
@@ -66,13 +68,13 @@ namespace Manga2Epub.epubBuild {
             Directory.CreateDirectory(this.cwd);
             // 创建mimetype文件
             cd("mimetype");
-            mkfile(this.cwd, FileTemplates.mimetype);
+            utils.mkfile(this.cwd, FileTemplates.mimetype);
             // 创建META-INF文件夹
             cd("META-INF");
             Directory.CreateDirectory(this.cwd);
             // 创建container.xml文件
             cd("META-INF", "container.xml");
-            mkfile(this.cwd, FileTemplates.containerXml);
+            utils.mkfile(this.cwd, FileTemplates.containerXml);
 
             // 创建OEBPS文件夹
             cd("OEBPS");
@@ -80,7 +82,7 @@ namespace Manga2Epub.epubBuild {
 
             // 创建OEBPS文件夹中除standard.opf文件、xhtml文件、图片文件以外的所有文件和文件夹
             cd("OEBPS", "navigation-documents.xhtml");
-            mkfile(this.cwd, FileTemplates.navigationDocumentsXhtml);
+            utils.mkfile(this.cwd, FileTemplates.navigationDocumentsXhtml);
             cd("OEBPS", "image");
             Directory.CreateDirectory(this.cwd);
             cd("OEBPS", "text");
@@ -88,29 +90,53 @@ namespace Manga2Epub.epubBuild {
             cd("OEBPS", "style");
             Directory.CreateDirectory(this.cwd);
             cd("OEBPS", "style", "fixed-layout-jp.css");
-            mkfile(this.cwd, FileTemplates.fixedLayoutJPCss);
+            utils.mkfile(this.cwd, FileTemplates.fixedLayoutJPCss);
 
         }
 
         private void makeDetails() {
             // 获取原始文件夹中所有图片的信息，并拷贝图片到目标文件夹
             cd("OEBPS", "image");
+            var pro = new ImagesProcessor(this.inputPath, this.cwd);
+            pro.proceed();
+            var images = pro.getImagesList();
 
+            // 生成xhtml文件，并获取xhtml文件信息array（xhtmls）
+            cd("OEBPS", "text");
+            var xhtml = new XhtmlGenerator(this.cwd, pro.getImagesList(), this.bookName);
+            xhtml.generate();
+            var xhtmls = xhtml.getXhtmls();
+
+            // 生成standard.opf文件
+            cd("OEBPS", "standard.opf");
+            var mfst = new ManifestGenerator(this.cwd, this.bookName, this.author, this.publisher, images, xhtmls);
+            mfst.generate();
         }
 
         private void makeEpub() {
+            cd(""); // 返回根文件夹
+            var sourceDir = this.cwd; // 根文件夹绝对路径
+            var zipFileName =
+                Path.GetFullPath(Path.Combine(this.outputRoot, "..", $"{this.bookName}.epub")); // zip压缩包文件完整路径
 
+            // 创建zip文件（扩展名为epub）
+            using (var zip = new ZipFile(Encoding.UTF8)) {
+
+                zip.CompressionLevel = CompressionLevel.None;
+
+                zip.AddFile(Path.Combine(this.outputRoot, "mimetype"), "");
+                zip.AddDirectory(Path.Combine(this.outputRoot, "META-INF"), "META-INF");
+                zip.AddDirectory(Path.Combine(this.outputRoot, "OEBPS"), "OEBPS");
+                // 可能会抛出FileNotFoundException
+                zip.Save(zipFileName);
+
+            }
         }
 
         public void build() {
             makeMainStructure();
             makeDetails();
             makeEpub();
-        }
-
-        private void mkfile(string filepath, string content) {
-            string[] c = {content};
-            File.WriteAllLines(filepath, c, Encoding.UTF8);
         }
     }
 }

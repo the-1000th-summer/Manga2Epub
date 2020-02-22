@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using Ionic.Zip;
 
 namespace Manga2Epub.epubBuild {
 
@@ -20,9 +21,15 @@ namespace Manga2Epub.epubBuild {
             var absDirPath = Path.GetFullPath(dir);
             var parentDirPath = Path.GetFullPath(Path.Combine(absDirPath, ".."));
 
+            //MessageBox.Show(Path.GetFullPath(Path.Combine("E:\\ACG\\folder\\aa (output)", "..", "haha.epub")));
+
+
+            //utils.mkfile(@"E:\ACG\container.xml",FileTemplates.containerXml);
             var b = new EpubBuilder(absDirPath, parentDirPath);
             b.build();
 
         }
+
+       
     }
 }
