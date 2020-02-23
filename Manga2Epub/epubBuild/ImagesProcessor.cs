@@ -40,6 +40,9 @@ namespace Manga2Epub.epubBuild {
         /// <param name="targetDirPath"></param>
         public void proceed() {
             scanImages();
+            if (bgWorker.CancellationPending) {
+                return;
+            }
             copyImages();
         }
 
@@ -70,6 +73,9 @@ namespace Manga2Epub.epubBuild {
                 this.images.Add(im_info);
 
                 bgWorker.ReportProgress( (i+1) * 20 / filesLength);
+                if (bgWorker.CancellationPending) {
+                    return;
+                }
             }
         }
 
@@ -105,6 +111,9 @@ namespace Manga2Epub.epubBuild {
 
                 //File.Copy(imagePath, newPath);
                 bgWorker.ReportProgress( 20 + (i + 1) * 20 / imageCount);
+                if (bgWorker.CancellationPending) {
+                    return;
+                }
             }
         }
 

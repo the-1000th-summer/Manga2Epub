@@ -17,11 +17,19 @@ namespace Manga2Epub.epubBuild {
             //this.selDir = selDir;
 
             var subDirs = Directory.GetDirectories(selDir);
-            if (subDirs.Length > 0) {    // ### 有子文件夹
-                foreach (var subdir in subDirs) {
-                    build1Book(subdir, bgWorker);
+            if (subDirs.Length > 0) {       // ### 有子文件夹
+                Properties.Settings.Default.multiBooks = true;
+                var subDirCount = subDirs.Length;
+                for (int i = 0; i < subDirCount; i++) {
+                    build1Book(subDirs[i], bgWorker);
+                    bgWorker.ReportProgress(100 + (i+1) * 100 / subDirCount);
+                    if (bgWorker.CancellationPending) {
+                        return;
+                    }
                 }
+                
             } else {                // 无子文件夹
+                Properties.Settings.Default.multiBooks = false;
                 build1Book(selDir, bgWorker);
             }
         }

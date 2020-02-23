@@ -5,5 +5,8 @@
     <Setting Name="selectDir" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="multiBooks" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

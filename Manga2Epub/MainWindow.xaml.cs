@@ -12,8 +12,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.IO;
 using Manga2Epub.epubBuild;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using Path = System.IO.Path;
 
 namespace Manga2Epub {
     /// <summary>
@@ -31,7 +33,6 @@ namespace Manga2Epub {
             //var myTextBlock = (TextBlock)this.FindName("myTextBlock");
             dirTextBox.Text = cSelDir;
             bgWorker = (BackgroundWorker)this.FindResource("backgroundWorker");
-
         }
 
         /// <summary>
@@ -99,6 +100,7 @@ namespace Manga2Epub {
             startBuildButton.IsEnabled = false;
             browseButton.IsEnabled = false;
             menu_selDir.IsEnabled = false;
+            cancelButton.IsEnabled = true;
             pBarIndicator.Content = "读取图片信息......";
             //var a = "sdf/ds-sd".Split('/');
             //foreach (var i in a) {
@@ -115,6 +117,10 @@ namespace Manga2Epub {
         private void bgWorker_DoWork(object sender, DoWorkEventArgs e) {
             string dirInput = (string) e.Argument;
             MainBuild.build(dirInput, bgWorker);
+
+            if (bgWorker.CancellationPending) {
+                e.Cancel = true;
+            }
         }
         /// <summary>
         /// 后台线程执行完毕，执行此方法
@@ -122,13 +128,25 @@ namespace Manga2Epub {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void bgWorker_runCompleted(object sender, RunWorkerCompletedEventArgs e) {
+            if (e.Cancelled) {
+                pBarIndicator.Content = "epub生成中止";
+                deleteIntermediate();
+                MessageBox.Show("epub生成中止！");
+            } else if (e.Error != null) {
+                pBarIndicator.Content = "出现未知错误";
+                MessageBox.Show("出现未知错误！");
+            } else {
+                pBarIndicator.Content = "完成";
+                MessageBox.Show("生成完毕！");
+            }
             startBuildButton.IsEnabled = true;
             browseButton.IsEnabled = true;
             menu_selDir.IsEnabled = true;
+            cancelButton.IsEnabled = false;
             pBar.Value = 0;
-            pBarIndicator.Content = "";
-            MessageBox.Show("Completed!!!");
+            pBarAll.Value = 0;
         }
+
         /// <summary>
         /// 进度条值改变，执行此方法
         /// </summary>
@@ -136,20 +154,46 @@ namespace Manga2Epub {
         /// <param name="e"></param>
         private void bgWorker_progressChanged(object sender, ProgressChangedEventArgs e) {
             var percent = e.ProgressPercentage;
-            switch (percent) {
-                case 40:
-                    pBarIndicator.Content = "创建xhtml文件......";
-                    break;
-                case 60:
-                    pBarIndicator.Content = "创建.opf文件.......";
-                    break;
-                case 70:
-                    pBarIndicator.Content = "写入图片......";
-                    break;
-                
+            if (percent <= 100) {
+                switch (percent) {
+                    case 40:
+                        pBarIndicator.Content = "创建xhtml文件......";
+                        break;
+                    case 60:
+                        pBarIndicator.Content = "创建.opf文件.......";
+                        break;
+                    case 70:
+                        pBarIndicator.Content = "写入图片......";
+                        break;
+                }
+                pBar.Value = percent;
+            } else {
+                pBarAll.Value = percent - 100;
             }
+            
+        }
 
-            pBar.Value = percent;
+        /// <summary>
+        /// 点击取消按钮执行此方法
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void cancelButton_Click(object sender, RoutedEventArgs e) {
+            bgWorker.CancelAsync();
+        }
+
+        private void deleteIntermediate() {
+            string[] booksDir;
+            if (Properties.Settings.Default.multiBooks) {
+                booksDir = Directory.GetDirectories(cSelDir);
+            } else {
+                booksDir = Directory.GetDirectories(Path.GetFullPath(Path.Combine(cSelDir, "..")));
+            }
+            foreach (var bookDir in booksDir) {
+                if (bookDir.EndsWith("(output)")) {
+                    DeleteDir.delete(bookDir);
+                }
+            }
         }
     }
 }

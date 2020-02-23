@@ -34,5 +34,16 @@ namespace Manga2Epub.Properties {
                 this["selectDir"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public bool multiBooks {
+            get {
+                return ((bool)(this["multiBooks"]));
+            }
+            set {
+                this["multiBooks"] = value;
+            }
+        }
     }
 }

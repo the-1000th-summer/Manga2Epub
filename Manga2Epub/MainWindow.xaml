@@ -26,9 +26,13 @@
         <Button x:Name="browseButton" Content="选择文件夹..." HorizontalAlignment="Left" Margin="658,31,0,0" VerticalAlignment="Top" Width="87" Click="browseButton_Click" Height="23" Grid.Row="1"/>
         <TextBox x:Name="dirTextBox" HorizontalAlignment="Left" Height="23" Margin="137,31,0,0" Grid.Row="1" TextWrapping="NoWrap" Text="TextBox" VerticalAlignment="Top" Width="507" AcceptsReturn="False" KeyDown="DirTextBox_OnKeyDown" LostFocus="DirTextBox_OnLostFocus"/>
         <Label x:Name="label" Content="工作文件夹：" HorizontalAlignment="Left" Margin="41,30,0,0" Grid.Row="1" VerticalAlignment="Top" Height="24" Width="80"/>
-        <Button x:Name="startBuildButton" Content="Start!" HorizontalAlignment="Left" Margin="10,299,0,0" Grid.Row="1" VerticalAlignment="Top" Width="127" Height="50" Click="startButton_Click" FontSize="36"/>
-        <ProgressBar x:Name="pBar" HorizontalAlignment="Left" Height="28" Margin="20,354,0,0" Grid.Row="1" VerticalAlignment="Top" Width="751" Value="50" Foreground="Orange"/>
-        <Label x:Name="pBarIndicator" Content="" HorizontalAlignment="Left" Margin="392,357,0,0" Grid.Row="1" VerticalAlignment="Top" RenderTransformOrigin="-0.05,0.2"/>
+        <Button x:Name="startBuildButton" Content="Start!" HorizontalAlignment="Left" Margin="20,209,0,0" Grid.Row="1" VerticalAlignment="Top" Width="127" Height="50" Click="startButton_Click" FontSize="36"/>
+        <ProgressBar x:Name="pBar" HorizontalAlignment="Left" Height="20" Margin="20,332,0,0" Grid.Row="1" VerticalAlignment="Top" Width="751" Foreground="Orange"/>
+        <ProgressBar x:Name="pBarAll" HorizontalAlignment="Left" Height="20
+        " Margin="20,366,0,0" Grid.Row="1" VerticalAlignment="Top" Width="751" Foreground="Orange"/>
+        <Label x:Name="pBarIndicator" Content="" HorizontalAlignment="Left" Margin="386,330,0,0" Grid.Row="1" VerticalAlignment="Top" RenderTransformOrigin="-0.05,0.2"/>
+        <Button x:Name="cancelButton" Content="取消" HorizontalAlignment="Left" Margin="602,180,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Click="cancelButton_Click"/>
+
 
     </Grid>
 </Window>
