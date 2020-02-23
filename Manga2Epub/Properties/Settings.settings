@@ -8,5 +8,8 @@
     <Setting Name="multiBooks" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="isRunning" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

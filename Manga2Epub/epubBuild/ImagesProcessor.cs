@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Windows.Media;
 
 namespace Manga2Epub.epubBuild {
@@ -58,10 +59,19 @@ namespace Manga2Epub.epubBuild {
                 var fileName = Path.GetFileName(filePath);
 
                 int w, h;
-                using (var im = new Bitmap(filePath)) {
-                    w = im.Width;
-                    h = im.Height;
+                try {
+                    using (var im = new Bitmap(filePath)) {
+                        w = im.Width;
+                        h = im.Height;
+                    }
+                } catch (ArgumentException) {
+                    MessageBox.Show($"检查到非图片文件：\n{filePath}\n忽略此文件并继续。");
+                    continue;
+                } catch (Exception e) {
+                    MessageBox.Show("未知错误！\n" + e.ToString());
+                    continue;
                 }
+                
 
                 var im_info = new ImageInfo();
                 im_info.fileName = fileName;

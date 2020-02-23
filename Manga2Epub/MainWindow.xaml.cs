@@ -32,7 +32,9 @@ namespace Manga2Epub {
             InitializeComponent();
             //var myTextBlock = (TextBlock)this.FindName("myTextBlock");
             dirTextBox.Text = cSelDir;
+            Properties.Settings.Default.isRunning = false;
             bgWorker = (BackgroundWorker)this.FindResource("backgroundWorker");
+            
         }
 
         /// <summary>
@@ -62,6 +64,7 @@ namespace Manga2Epub {
             if (e.Key == Key.Enter) {
                 dirTextBox.SelectAll();
                 saveSelectDir(dirTextBox.Text);
+                changeUIAccV(validateDir(dirTextBox.Text));
             }
         }
 
@@ -72,6 +75,29 @@ namespace Manga2Epub {
         /// <param name="e"></param>
         private void DirTextBox_OnLostFocus(object sender, RoutedEventArgs e) {
             saveSelectDir(dirTextBox.Text);
+            changeUIAccV(validateDir(dirTextBox.Text));
+        }
+
+        private bool validateDir(string dir) {
+            if (Directory.Exists(dir)) {
+                var subDirs = Directory.GetDirectories(dir);
+                if (subDirs.Length > 0) {
+                    return true;
+                } else {
+                    if (Directory.GetFiles(dir).Length > 0) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        private void changeUIAccV(bool vali) {
+            if (vali) {
+                startBuildButton.IsEnabled = true;
+            } else {
+                startBuildButton.IsEnabled = false;
+                MessageBox.Show("此路径无效。");
+            }
         }
 
         /// <summary>
@@ -80,7 +106,14 @@ namespace Manga2Epub {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void exit_OnClick(object sender, RoutedEventArgs e) {
-            Application.Current.Shutdown();
+            if (Properties.Settings.Default.isRunning) {
+                if (MessageBox.Show("退出程序吗？任务仍在执行。", "退出程序吗？", MessageBoxButton.YesNo, MessageBoxImage.Question) ==
+                    MessageBoxResult.Yes) {
+                    Application.Current.Shutdown();
+                }
+            } else {
+                Application.Current.Shutdown();
+            }
         }
 
         /// <summary>
@@ -100,8 +133,11 @@ namespace Manga2Epub {
             startBuildButton.IsEnabled = false;
             browseButton.IsEnabled = false;
             menu_selDir.IsEnabled = false;
+            dirTextBox.IsEnabled = false;
             cancelButton.IsEnabled = true;
             pBarIndicator.Content = "读取图片信息......";
+            Properties.Settings.Default.isRunning = true;
+            Properties.Settings.Default.Save();
             //var a = "sdf/ds-sd".Split('/');
             //foreach (var i in a) {
             //    Console.WriteLine("__"+i+"__");
@@ -139,9 +175,13 @@ namespace Manga2Epub {
                 pBarIndicator.Content = "完成";
                 MessageBox.Show("生成完毕！");
             }
+
+            Properties.Settings.Default.isRunning = false;
+            Properties.Settings.Default.Save();
             startBuildButton.IsEnabled = true;
             browseButton.IsEnabled = true;
             menu_selDir.IsEnabled = true;
+            dirTextBox.IsEnabled = true;
             cancelButton.IsEnabled = false;
             pBar.Value = 0;
             pBarAll.Value = 0;
@@ -179,9 +219,27 @@ namespace Manga2Epub {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void cancelButton_Click(object sender, RoutedEventArgs e) {
-            bgWorker.CancelAsync();
+            if (MessageBox.Show("中止epub生成吗？", "中止epub生成吗？", MessageBoxButton.YesNo, MessageBoxImage.Question) ==
+                MessageBoxResult.Yes) {
+                bgWorker.CancelAsync();
+            }
         }
 
+        private void mainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
+            //exit_OnClick(sender, null);
+            if (Properties.Settings.Default.isRunning) {
+                if (MessageBox.Show("退出程序吗？任务仍在执行。", "退出程序吗？", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No) {
+                    e.Cancel = true;
+                } else {
+                    Application.Current.Shutdown();
+                }
+            }
+            
+        }
+
+        /// <summary>
+        /// 删除(output)文件夹
+        /// </summary>
         private void deleteIntermediate() {
             string[] booksDir;
             if (Properties.Settings.Default.multiBooks) {
@@ -190,7 +248,7 @@ namespace Manga2Epub {
                 booksDir = Directory.GetDirectories(Path.GetFullPath(Path.Combine(cSelDir, "..")));
             }
             foreach (var bookDir in booksDir) {
-                if (bookDir.EndsWith("(output)")) {
+                if (bookDir.EndsWith("(output)") || bookDir.EndsWith(".tmp")) {
                     DeleteDir.delete(bookDir);
                 }
             }

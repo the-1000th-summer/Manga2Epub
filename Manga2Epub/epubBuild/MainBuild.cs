@@ -19,6 +19,7 @@ namespace Manga2Epub.epubBuild {
             var subDirs = Directory.GetDirectories(selDir);
             if (subDirs.Length > 0) {       // ### 有子文件夹
                 Properties.Settings.Default.multiBooks = true;
+                Properties.Settings.Default.Save();
                 var subDirCount = subDirs.Length;
                 for (int i = 0; i < subDirCount; i++) {
                     build1Book(subDirs[i], bgWorker);
@@ -30,6 +31,7 @@ namespace Manga2Epub.epubBuild {
                 
             } else {                // 无子文件夹
                 Properties.Settings.Default.multiBooks = false;
+                Properties.Settings.Default.Save();
                 build1Book(selDir, bgWorker);
             }
         }
