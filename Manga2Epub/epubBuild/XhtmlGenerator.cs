@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -24,12 +25,14 @@ namespace Manga2Epub.epubBuild {
         private List<ImageInfo> images;
         private string bookName;
         private List<XhtmlInfo> xhtmls;
+        private BackgroundWorker bgWorker;
 
-        public XhtmlGenerator(string targetDirPath, List<ImageInfo> images, string bookName) {
+        public XhtmlGenerator(string targetDirPath, List<ImageInfo> images, string bookName, BackgroundWorker bgWorker) {
             this.targetDirPath = targetDirPath;
             this.images = images;
             this.bookName = bookName;
             this.xhtmls = new List<XhtmlInfo>();
+            this.bgWorker = bgWorker;
         }
 
         public void generate() {
@@ -46,7 +49,8 @@ namespace Manga2Epub.epubBuild {
                              this.images[picNumMiddle + 1].height +
                              this.images[picNumMiddle + 2].height) / 5;
 
-            for (int i = 0; i < this.images.Count; i++) {
+            var imagesCount = this.images.Count;
+            for (int i = 0; i < imagesCount; i++) {
                 string xhtmlName;
                 if (i == 0) {
                     xhtmlName = "p_cover.xhtml";
@@ -65,6 +69,8 @@ namespace Manga2Epub.epubBuild {
                 xhtmlInfo.fileName = xhtmlName;
                 xhtmlInfo.setId();
                 this.xhtmls.Add(xhtmlInfo);
+
+                bgWorker.ReportProgress(40 + (i + 1) * 20 / imagesCount);
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -12,14 +13,16 @@ namespace Manga2Epub.epubBuild {
         private string publisher;
         private List<ImageInfo> images;
         private List<XhtmlInfo> xhtmls;
+        private BackgroundWorker bgWorker;
 
-        public ManifestGenerator(string targetFilepath, string bookName, string author, string publisher, List<ImageInfo> images, List<XhtmlInfo> xhtmls) {
+        public ManifestGenerator(string targetFilepath, string bookName, string author, string publisher, List<ImageInfo> images, List<XhtmlInfo> xhtmls, BackgroundWorker bgWorker) {
             this.targetFilepath = targetFilepath;
             this.bookName = bookName;
             this.author = author;
             this.publisher = publisher;
             this.images = images;
             this.xhtmls = xhtmls;
+            this.bgWorker = bgWorker;
         }
 
         public void generate() {
@@ -30,7 +33,9 @@ namespace Manga2Epub.epubBuild {
                 this.author,
                 this.publisher,
                 Guid.NewGuid().ToString(),
+                //"5b021173-d0fa-4a5e-9729-2cdd8ccdb259",
                 DateTime.Now.ToLocalTime().ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                //"2020-02-23T20:22:19Z",
                 imageItems,
                 xhtmlItems,
                 itemrefs
@@ -54,6 +59,8 @@ namespace Manga2Epub.epubBuild {
                 image_items += image_item;
             }
 
+            bgWorker.ReportProgress(63);
+
             // xhtmls
             xhtml_items = "";
             for (int i = 0; i < this.xhtmls.Count; i++) {
@@ -68,6 +75,7 @@ namespace Manga2Epub.epubBuild {
                 }
                 xhtml_items += xhtml_item;
             }
+            bgWorker.ReportProgress(66);
 
             // Itemrefs
             itemrefs = "";
@@ -84,6 +92,7 @@ namespace Manga2Epub.epubBuild {
                 }
                 itemrefs += itemref;
             }
+            bgWorker.ReportProgress(70);
         }
 
     }
