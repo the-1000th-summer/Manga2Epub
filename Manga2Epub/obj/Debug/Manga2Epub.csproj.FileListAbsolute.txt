@@ -20,3 +20,9 @@ E:\CSharpLearn\Manga2Epub\project\Manga2Epub\Manga2Epub\bin\Debug\Manga2Epub.exe
 E:\CSharpLearn\Manga2Epub\project\Manga2Epub\Manga2Epub\bin\Debug\DotNetZip.dll
 E:\CSharpLearn\Manga2Epub\project\Manga2Epub\Manga2Epub\bin\Debug\DotNetZip.pdb
 E:\CSharpLearn\Manga2Epub\project\Manga2Epub\Manga2Epub\bin\Debug\DotNetZip.xml
+E:\CSharpLearn\Manga2Epub\project\Manga2Epub\Manga2Epub\obj\Debug\epubBuild\AboutView.g.cs
+E:\CSharpLearn\Manga2Epub\project\Manga2Epub\Manga2Epub\obj\Debug\epubBuild\AboutView.baml
+E:\CSharpLearn\Manga2Epub\project\Manga2Epub\Manga2Epub\bin\Debug\Manga2Epub.exe.manifest
+E:\CSharpLearn\Manga2Epub\project\Manga2Epub\Manga2Epub\bin\Debug\Manga2Epub.application
+E:\CSharpLearn\Manga2Epub\project\Manga2Epub\Manga2Epub\obj\Debug\Manga2Epub.exe.manifest
+E:\CSharpLearn\Manga2Epub\project\Manga2Epub\Manga2Epub\obj\Debug\Manga2Epub.application

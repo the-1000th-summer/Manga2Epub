@@ -56,5 +56,29 @@ namespace Manga2Epub.Properties {
                 this["isRunning"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool contiWNPic {
+            get {
+                return ((bool)(this["contiWNPic"]));
+            }
+            set {
+                this["contiWNPic"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool contiNoMen {
+            get {
+                return ((bool)(this["contiNoMen"]));
+            }
+            set {
+                this["contiNoMen"] = value;
+            }
+        }
     }
 }

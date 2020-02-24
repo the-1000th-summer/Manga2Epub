@@ -32,9 +32,13 @@ namespace Manga2Epub {
             InitializeComponent();
             //var myTextBlock = (TextBlock)this.FindName("myTextBlock");
             dirTextBox.Text = cSelDir;
+
             Properties.Settings.Default.isRunning = false;
+            Properties.Settings.Default.Save();
+            menu_contiWhenNotPic.IsChecked = Properties.Settings.Default.contiWNPic;
+
             bgWorker = (BackgroundWorker)this.FindResource("backgroundWorker");
-            
+            //MessageBox.Show(Properties.Settings.Default.contiWNPic.ToString());
         }
 
         /// <summary>
@@ -52,6 +56,7 @@ namespace Manga2Epub {
                 var selectDir = dialog.FileName;
                 saveSelectDir(selectDir);
                 dirTextBox.Text = selectDir;
+                changeUIAccV(validateDir(dirTextBox.Text));
             }
         }
 
@@ -81,14 +86,18 @@ namespace Manga2Epub {
         private bool validateDir(string dir) {
             if (Directory.Exists(dir)) {
                 var subDirs = Directory.GetDirectories(dir);
-                if (subDirs.Length > 0) {
+                if (subDirs.Length > 0) {   // 有子文件夹
+                    updateList(subDirs);
                     return true;
-                } else {
+                } else {               // 无子文件夹，文件夹里有文件
                     if (Directory.GetFiles(dir).Length > 0) {
+                        updateList(dir);
                         return true;
                     }
                 }
             }
+            bookListBox.Items.Clear();
+            
             return false;
         }
         private void changeUIAccV(bool vali) {
@@ -97,6 +106,29 @@ namespace Manga2Epub {
             } else {
                 startBuildButton.IsEnabled = false;
                 MessageBox.Show("此路径无效。");
+            }
+            //MessageBox.Show(this, "fdf");
+        }
+
+        private void updateList(params string[] foldersDir) {
+            bookListBox.Items.Clear();
+            foreach (var folderDir in foldersDir) {
+                var stk = new StackPanel();
+                stk.Orientation = Orientation.Horizontal;
+                var folderNameLabel = new Label();
+                folderNameLabel.VerticalAlignment = VerticalAlignment.Center;
+                folderNameLabel.Content = Path.GetFileName(folderDir);
+                stk.Children.Add(folderNameLabel);
+                var cmImage = new Image();
+                cmImage.Width = 20;
+                cmImage.Height = 20;
+                cmImage.Source = new BitmapImage(new Uri("pack://application:,,,/checkMark.png"));
+                cmImage.Visibility = Visibility.Hidden;
+                stk.Children.Add(cmImage);
+
+                //var itm = new ListBoxItem();
+                //itm.Content = Path.GetFileName(folderDir);
+                bookListBox.Items.Add(stk);
             }
         }
 
@@ -135,7 +167,7 @@ namespace Manga2Epub {
             menu_selDir.IsEnabled = false;
             dirTextBox.IsEnabled = false;
             cancelButton.IsEnabled = true;
-            pBarIndicator.Content = "读取图片信息......";
+            pBarIndicator.Text = "读取图片信息...";
             Properties.Settings.Default.isRunning = true;
             Properties.Settings.Default.Save();
             //var a = "sdf/ds-sd".Split('/');
@@ -165,14 +197,14 @@ namespace Manga2Epub {
         /// <param name="e"></param>
         private void bgWorker_runCompleted(object sender, RunWorkerCompletedEventArgs e) {
             if (e.Cancelled) {
-                pBarIndicator.Content = "epub生成中止";
+                pBarIndicator.Text = "epub生成中止";
                 deleteIntermediate();
                 MessageBox.Show("epub生成中止！");
             } else if (e.Error != null) {
-                pBarIndicator.Content = "出现未知错误";
+                pBarIndicator.Text = "出现未知错误";
                 MessageBox.Show("出现未知错误！");
             } else {
-                pBarIndicator.Content = "完成";
+                pBarIndicator.Text = "完成";
                 MessageBox.Show("生成完毕！");
             }
 
@@ -197,18 +229,29 @@ namespace Manga2Epub {
             if (percent <= 100) {
                 switch (percent) {
                     case 40:
-                        pBarIndicator.Content = "创建xhtml文件......";
+                        pBarIndicator.Text = "创建xhtml文件...";
                         break;
                     case 60:
-                        pBarIndicator.Content = "创建.opf文件.......";
+                        pBarIndicator.Text = "创建.opf文件....";
                         break;
                     case 70:
-                        pBarIndicator.Content = "写入图片......";
+                        pBarIndicator.Text = "写入图片...";
                         break;
                 }
                 pBar.Value = percent;
-            } else {
+            } else if (percent <= 200) {
                 pBarAll.Value = percent - 100;
+                if (bookListBox.Items.Count > 0) {
+                    var finishItem = bookListBox.Items[(int)e.UserState] as StackPanel;
+                    finishItem.Children[1].Visibility = Visibility.Visible;
+                }
+
+            } else {
+                switch (percent) {
+                    case 201:
+                        MessageBox.Show($"检查到非图片文件\n{e.UserState}\n继续任务。");
+                        break;
+                }
             }
             
         }
@@ -251,6 +294,30 @@ namespace Manga2Epub {
                 if (bookDir.EndsWith("(output)") || bookDir.EndsWith(".tmp")) {
                     DeleteDir.delete(bookDir);
                 }
+            }
+        }
+
+        private void contiWhenNotPic_OnClick(object sender, RoutedEventArgs e) {
+            Properties.Settings.Default.contiWNPic = menu_contiWhenNotPic.IsChecked;
+            Properties.Settings.Default.Save();
+        }
+
+        private void contiNoMention_OnClick(object sender, RoutedEventArgs e) {
+            Properties.Settings.Default.contiNoMen = menu_contiNoMention.IsChecked;
+            Properties.Settings.Default.Save();
+        }
+
+        private void about_OnClick(object sender, RoutedEventArgs e) {
+            bool isWindowOpen = false;
+            foreach (Window w in Application.Current.Windows) {
+                if (w is AboutView) {
+                    isWindowOpen = true;
+                    w.Activate();
+                }
+            }
+            if (!isWindowOpen) {
+                var newwindow = new AboutView();
+                newwindow.Show();
             }
         }
     }

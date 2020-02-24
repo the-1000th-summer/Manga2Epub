@@ -65,7 +65,13 @@ namespace Manga2Epub.epubBuild {
                         h = im.Height;
                     }
                 } catch (ArgumentException) {
-                    MessageBox.Show($"检查到非图片文件：\n{filePath}\n忽略此文件并继续。");
+                    if (Properties.Settings.Default.contiWNPic) {
+                        if (!Properties.Settings.Default.contiNoMen) {
+                            bgWorker.ReportProgress(201, filePath);
+                        }
+                    } else {
+                        MessageBox.Show($"检查到非图片文件：\n{filePath}\n点击确定按钮忽略此文件并继续。");
+                    }
                     continue;
                 } catch (Exception e) {
                     MessageBox.Show("未知错误！\n" + e.ToString());

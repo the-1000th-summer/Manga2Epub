@@ -1,0 +1,21 @@
+﻿<Window x:Class="Manga2Epub.epubBuild.AboutView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Manga2Epub.epubBuild"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Title="About" Height="200" Width="300">
+    <Grid>
+        <Label x:Name="label" Content="Manga2Epub" HorizontalAlignment="Center" Margin="74,24,76,0" VerticalAlignment="Top" FontSize="20" FontWeight="Bold" />
+        <Label x:Name="label1" Content="v1.0" HorizontalAlignment="Center" Margin="0,64,0,0" VerticalAlignment="Top"/>
+        <TextBlock x:Name="textBlock" HorizontalAlignment="Center" Margin="0,121,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="80" TextAlignment="Center">
+            <Hyperlink NavigateUri="https://github.com/the-1000th-summer/Manga2Epub" RequestNavigate="openWebsite">
+                Source Code
+            </Hyperlink>
+        </TextBlock>
+
+    </Grid>
+</Window>
