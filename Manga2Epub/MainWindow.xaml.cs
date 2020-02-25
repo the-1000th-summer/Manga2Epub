@@ -167,7 +167,7 @@ namespace Manga2Epub {
             menu_selDir.IsEnabled = false;
             dirTextBox.IsEnabled = false;
             cancelButton.IsEnabled = true;
-            pBarIndicator.Text = "读取图片信息...";
+
             Properties.Settings.Default.isRunning = true;
             Properties.Settings.Default.Save();
             //var a = "sdf/ds-sd".Split('/');
@@ -250,6 +250,9 @@ namespace Manga2Epub {
                 switch (percent) {
                     case 201:
                         MessageBox.Show($"检查到非图片文件\n{e.UserState}\n继续任务。");
+                        break;
+                    case 202:
+                        pBarIndicator.Text = e.UserState.ToString();
                         break;
                 }
             }

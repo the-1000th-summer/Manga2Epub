@@ -31,6 +31,7 @@ namespace Manga2Epub.epubBuild {
         }
 
         public void build() {
+            bgWorker.ReportProgress(202, "读取图片信息...");
             makeMainStructure();
             makeDetails();
             if (bgWorker.CancellationPending) {
