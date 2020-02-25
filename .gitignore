@@ -1,1 +1,6 @@
 .vs
+
+/Manga2Epub/bin/
+/Manga2Epub/obj/
+/Manga2Epub/Manga2Epub_TemporaryKey.pfx
+/Manga2Epub/Manga2Epub.csproj.user

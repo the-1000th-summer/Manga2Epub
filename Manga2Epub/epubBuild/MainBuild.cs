@@ -37,6 +37,7 @@ namespace Manga2Epub.epubBuild {
                 Properties.Settings.Default.multiBooks = false;
                 Properties.Settings.Default.Save();
                 build1Book(selDir, bgWorker);
+                bgWorker.ReportProgress(200, 0);
             }
         }
 
